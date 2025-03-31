@@ -107,13 +107,6 @@ const Sidebar = () => {
   const location = useLocation();
   const path = location.pathname;
 
-  const handleUnimplementedClick = () => {
-    toast({
-      title: "Feature coming soon",
-      description: "This feature is currently under development",
-    });
-  };
-
   return (
     <div className="h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 overflow-y-auto py-4 flex flex-col">
       <div className="px-4 mb-6">
@@ -185,7 +178,6 @@ const Sidebar = () => {
           icon={<LineChart className="h-5 w-5" />}
           label="Reports"
           active={path === "/reports"}
-          disabled={true}
         />
       </div>
 
@@ -195,7 +187,6 @@ const Sidebar = () => {
           icon={<Users className="h-5 w-5" />}
           label="User Management"
           active={path === "/users"}
-          disabled={true}
         />
         
         <SidebarLink
@@ -203,7 +194,6 @@ const Sidebar = () => {
           icon={<Settings className="h-5 w-5" />}
           label="Settings"
           active={path === "/settings"}
-          disabled={true}
         />
       </div>
     </div>
