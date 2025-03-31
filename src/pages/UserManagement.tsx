@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
@@ -41,12 +40,6 @@ const UserManagement = () => {
   return (
     <PageLayout title="User Management" description="Manage user accounts and permissions">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-          <p className="text-sm text-gray-500">
-            Manage user accounts, roles, and permissions
-          </p>
-        </div>
         <Button onClick={handleCreateUser}>
           <Plus className="h-4 w-4 mr-2" />
           Add User

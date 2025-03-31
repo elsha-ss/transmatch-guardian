@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
@@ -51,14 +50,8 @@ const Reports = () => {
   };
 
   return (
-    <PageLayout title="Reports" description="View and export transaction reports">
+    <PageLayout title="Financial Reports" description="Analyze transaction trends and generate custom reports">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Financial Reports</h1>
-          <p className="text-sm text-gray-500">
-            Analyze transaction trends and generate custom reports
-          </p>
-        </div>
         <div className="flex gap-3">
           <Button variant="outline" size="sm" onClick={() => toast({ 
             title: "Filters",
