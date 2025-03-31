@@ -14,6 +14,7 @@ import {
   CircleDollarSign
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 interface SidebarLinkProps {
   to: string;
@@ -21,9 +22,35 @@ interface SidebarLinkProps {
   label: string;
   active?: boolean;
   badge?: number;
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
-const SidebarLink = ({ to, icon, label, active, badge }: SidebarLinkProps) => {
+const SidebarLink = ({ 
+  to, 
+  icon, 
+  label, 
+  active, 
+  badge, 
+  disabled = false,
+  onClick 
+}: SidebarLinkProps) => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled) {
+      e.preventDefault();
+      toast({
+        title: "Feature not available",
+        description: `The ${label} feature is coming soon!`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <Link
       to={to}
@@ -31,8 +58,10 @@ const SidebarLink = ({ to, icon, label, active, badge }: SidebarLinkProps) => {
         "flex items-center px-4 py-2.5 text-sm font-medium rounded-md mb-1",
         active
           ? "bg-guardian-100 text-guardian-800"
-          : "text-gray-600 hover:bg-gray-100"
+          : "text-gray-600 hover:bg-gray-100",
+        disabled && "opacity-50 cursor-not-allowed"
       )}
+      onClick={handleClick}
     >
       <span className="flex items-center">
         {icon}
@@ -77,6 +106,13 @@ const SidebarGroup = ({ label, icon, children, defaultOpen = false }: SidebarGro
 const Sidebar = () => {
   const location = useLocation();
   const path = location.pathname;
+
+  const handleUnimplementedClick = () => {
+    toast({
+      title: "Feature coming soon",
+      description: "This feature is currently under development",
+    });
+  };
 
   return (
     <div className="h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 overflow-y-auto py-4 flex flex-col">
@@ -125,12 +161,14 @@ const Sidebar = () => {
             icon={<div className="w-2 h-2 rounded-full bg-guardian-400 ml-1 mr-1" />}
             label="Reconciliation"
             active={path === "/transactions/reconciliation"}
+            disabled={true}
           />
           <SidebarLink
             to="/transactions/history"
             icon={<div className="w-2 h-2 rounded-full bg-guardian-400 ml-1 mr-1" />}
             label="History"
             active={path === "/transactions/history"}
+            disabled={true}
           />
         </SidebarGroup>
         
@@ -147,6 +185,7 @@ const Sidebar = () => {
           icon={<LineChart className="h-5 w-5" />}
           label="Reports"
           active={path === "/reports"}
+          disabled={true}
         />
       </div>
 
@@ -156,6 +195,7 @@ const Sidebar = () => {
           icon={<Users className="h-5 w-5" />}
           label="User Management"
           active={path === "/users"}
+          disabled={true}
         />
         
         <SidebarLink
@@ -163,6 +203,7 @@ const Sidebar = () => {
           icon={<Settings className="h-5 w-5" />}
           label="Settings"
           active={path === "/settings"}
+          disabled={true}
         />
       </div>
     </div>

@@ -2,6 +2,8 @@
 import { AlertTriangle, AlertCircle, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 // Sample data
 const alerts = [
@@ -79,12 +81,26 @@ const getSeverityBadge = (severity: string) => {
 };
 
 const AlertsTable = () => {
+  const handleReviewClick = (id: number) => {
+    toast({
+      title: "Alert review started",
+      description: `You're now reviewing alert #${id}`,
+    });
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       <div className="p-4 border-b border-gray-200 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-800">Recent Fraud Alerts</h3>
-        <Button variant="ghost" size="sm" className="text-guardian-600 hover:text-guardian-800 flex items-center gap-1">
-          View all <ArrowRight className="h-4 w-4 ml-1" />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-guardian-600 hover:text-guardian-800 flex items-center gap-1"
+          asChild
+        >
+          <Link to="/alerts">
+            View all <ArrowRight className="h-4 w-4 ml-1" />
+          </Link>
         </Button>
       </div>
       
@@ -127,7 +143,12 @@ const AlertsTable = () => {
                   <div className="text-sm text-gray-500">{alert.timestamp}</div>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-right">
-                  <Button variant="ghost" size="sm" className="text-guardian-600 hover:text-guardian-800">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-guardian-600 hover:text-guardian-800"
+                    onClick={() => handleReviewClick(alert.id)}
+                  >
                     Review
                   </Button>
                 </td>
