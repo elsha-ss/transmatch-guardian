@@ -1,7 +1,6 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Bell, ChevronDown, User, LogOut, Settings, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,9 +9,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import NotificationsDropdown from "./NotificationsDropdown";
+import { toast } from "@/hooks/use-toast";
 
 const Header = () => {
-  const [notifications, setNotifications] = useState(3);
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    toast({
+      title: "Profile",
+      description: "Navigating to your profile page",
+    });
+    // Would typically navigate to profile page
+    // navigate("/profile");
+  };
+
+  const handleSettingsClick = () => {
+    navigate("/settings");
+  };
+
+  const handleLogout = () => {
+    toast({
+      title: "Logging out",
+      description: "You have been logged out of the system",
+    });
+    // Would typically handle logout logic then redirect
+    // In a real app, we'd clear auth tokens, etc.
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
+  };
 
   return (
     <header className="w-full h-16 bg-white border-b border-gray-200">
@@ -28,7 +54,9 @@ const Header = () => {
         
         <div className="flex-1 max-w-xl mx-8 relative hidden md:block">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-gray-400" />
+            <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
           <input
             type="text"
@@ -38,14 +66,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5 text-gray-600" />
-            {notifications > 0 && (
-              <span className="absolute top-0 right-0 h-4 w-4 bg-alert-high rounded-full text-white text-xs flex items-center justify-center">
-                {notifications}
-              </span>
-            )}
-          </Button>
+          <NotificationsDropdown />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -58,16 +79,16 @@ const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleProfileClick}>
                 <User className="mr-2 h-4 w-4" />
                 <span>My Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSettingsClick}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

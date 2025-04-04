@@ -1,9 +1,11 @@
 
+import { useState } from "react";
 import { AlertTriangle, AlertCircle, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import ReviewAlertDialog from "@/components/alerts/ReviewAlertDialog";
 
 // Sample data
 const alerts = [
@@ -81,11 +83,14 @@ const getSeverityBadge = (severity: string) => {
 };
 
 const AlertsTable = () => {
-  const handleReviewClick = (id: number) => {
-    toast({
-      title: "Alert review started",
-      description: `You're now reviewing alert #${id}`,
-    });
+  const [reviewAlert, setReviewAlert] = useState<{ id: number; title: string } | null>(null);
+
+  const handleReviewClick = (id: number, title: string) => {
+    setReviewAlert({ id, title });
+  };
+
+  const handleCloseReview = () => {
+    setReviewAlert(null);
   };
 
   return (
@@ -147,7 +152,7 @@ const AlertsTable = () => {
                     variant="ghost" 
                     size="sm" 
                     className="text-guardian-600 hover:text-guardian-800"
-                    onClick={() => handleReviewClick(alert.id)}
+                    onClick={() => handleReviewClick(alert.id, alert.title)}
                   >
                     Review
                   </Button>
@@ -157,6 +162,15 @@ const AlertsTable = () => {
           </tbody>
         </table>
       </div>
+
+      {reviewAlert && (
+        <ReviewAlertDialog
+          isOpen={!!reviewAlert}
+          onClose={handleCloseReview}
+          alertId={reviewAlert.id}
+          alertTitle={reviewAlert.title}
+        />
+      )}
     </div>
   );
 };

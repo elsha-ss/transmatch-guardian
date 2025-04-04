@@ -8,9 +8,11 @@ import {
   Search,
   CheckCircle,
   Clock, 
-  XCircle
+  XCircle,
+  Download
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import ReviewAlertDialog from "@/components/alerts/ReviewAlertDialog";
 
 // Sample data
 const alertsData = [
@@ -143,16 +145,33 @@ const getStatusBadge = (status: string) => {
 
 const Alerts = () => {
   const [activeFilter, setActiveFilter] = useState("all");
+  const [reviewAlert, setReviewAlert] = useState<{ id: number; title: string } | null>(null);
   
   const filteredAlerts = activeFilter === "all" 
     ? alertsData 
     : alertsData.filter(alert => alert.status === activeFilter);
   
-  const handleReviewAlert = (id: number) => {
+  const handleReviewAlert = (id: number, title: string) => {
+    setReviewAlert({ id, title });
+  };
+
+  const handleCloseReview = () => {
+    setReviewAlert(null);
+  };
+
+  const handleDownloadAllReports = () => {
     toast({
-      title: "Alert review started",
-      description: `You're now reviewing alert #${id}`,
+      title: "Downloading reports",
+      description: "All alert reports are being compiled for download",
     });
+    
+    // Simulate download delay
+    setTimeout(() => {
+      toast({
+        title: "Reports ready",
+        description: "All alert reports have been downloaded",
+      });
+    }, 1500);
   };
 
   return (
@@ -253,7 +272,7 @@ const Alerts = () => {
                       variant="ghost" 
                       size="sm" 
                       className="text-guardian-600 hover:text-guardian-900"
-                      onClick={() => handleReviewAlert(alert.id)}
+                      onClick={() => handleReviewAlert(alert.id, alert.title)}
                     >
                       Review
                     </Button>
@@ -275,7 +294,28 @@ const Alerts = () => {
             </p>
           </div>
         )}
+        
+        <div className="p-4 border-t border-gray-200 flex justify-end">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2"
+            onClick={handleDownloadAllReports}
+          >
+            <Download className="h-4 w-4" />
+            Download All Reports
+          </Button>
+        </div>
       </div>
+      
+      {reviewAlert && (
+        <ReviewAlertDialog
+          isOpen={!!reviewAlert}
+          onClose={handleCloseReview}
+          alertId={reviewAlert.id}
+          alertTitle={reviewAlert.title}
+        />
+      )}
     </PageLayout>
   );
 };
