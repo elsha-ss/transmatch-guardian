@@ -45,10 +45,10 @@ const Header = () => {
       <div className="h-full px-4 flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <div className="h-9 w-9 rounded-md bg-guardian-600 text-white flex items-center justify-center mr-2">
+            <div className="h-9 w-9 rounded-md bg-green-600 text-white flex items-center justify-center mr-2">
               <span className="font-bold text-lg">TG</span>
             </div>
-            <h1 className="text-xl font-bold text-guardian-800">TransMatch Guardian</h1>
+            <h1 className="text-xl font-bold text-green-800">TransMatch Guardian</h1>
           </Link>
         </div>
         
@@ -61,7 +61,7 @@ const Header = () => {
           <input
             type="text"
             placeholder="Search transactions, vendors, alerts..."
-            className="w-full py-1.5 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-guardian-400 focus:border-transparent"
+            className="w-full py-1.5 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
           />
         </div>
 
@@ -71,8 +71,8 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-guardian-100 flex items-center justify-center">
-                  <User className="h-4 w-4 text-guardian-600" />
+                <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
+                  <User className="h-4 w-4 text-orange-600" />
                 </div>
                 <span className="font-medium text-sm hidden md:inline">Admin User</span>
                 <ChevronDown className="h-4 w-4 text-gray-600" />

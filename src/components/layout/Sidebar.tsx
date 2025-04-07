@@ -11,7 +11,8 @@ import {
   Settings,
   ChevronRight,
   ChevronDown,
-  CircleDollarSign
+  CircleDollarSign,
+  FolderOpen
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -55,10 +56,10 @@ const SidebarLink = ({
     <Link
       to={to}
       className={cn(
-        "flex items-center px-4 py-2.5 text-sm font-medium rounded-md mb-1",
+        "flex items-center px-4 py-2.5 text-sm font-medium rounded-md mb-1 transition-all duration-200",
         active
-          ? "bg-guardian-100 text-guardian-800"
-          : "text-gray-600 hover:bg-gray-100",
+          ? "bg-green-100 text-green-800"
+          : "text-gray-600 hover:bg-orange-50 hover:text-orange-800",
         disabled && "opacity-50 cursor-not-allowed"
       )}
       onClick={handleClick}
@@ -68,7 +69,7 @@ const SidebarLink = ({
       </span>
       <span className="ml-3 flex-1">{label}</span>
       {badge && (
-        <span className="ml-auto bg-alert-high text-white px-2 py-0.5 rounded-full text-xs">
+        <span className="ml-auto bg-orange-500 text-white px-2 py-0.5 rounded-full text-xs">
           {badge}
         </span>
       )}
@@ -90,7 +91,7 @@ const SidebarGroup = ({ label, icon, children, defaultOpen = false }: SidebarGro
     <div className="mb-2">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-md"
+        className="w-full flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-orange-800 rounded-md transition-all duration-200"
       >
         <span className="flex items-center">
           {icon}
@@ -110,14 +111,14 @@ const Sidebar = () => {
   return (
     <div className="h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 overflow-y-auto py-4 flex flex-col">
       <div className="px-4 mb-6">
-        <div className="bg-guardian-50 border border-guardian-200 rounded-md p-3">
+        <div className="bg-green-50 border border-green-200 rounded-md p-3">
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-guardian-100 flex items-center justify-center">
-              <CircleDollarSign className="h-4 w-4 text-guardian-600" />
+            <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+              <CircleDollarSign className="h-4 w-4 text-green-600" />
             </div>
             <div className="ml-3">
-              <p className="text-xs text-guardian-600">Unmatched Transactions</p>
-              <p className="text-lg font-semibold text-guardian-800">143</p>
+              <p className="text-xs text-green-600">Unmatched Transactions</p>
+              <p className="text-lg font-semibold text-green-800">143</p>
             </div>
           </div>
         </div>
@@ -145,25 +146,32 @@ const Sidebar = () => {
         >
           <SidebarLink
             to="/transactions/matching"
-            icon={<div className="w-2 h-2 rounded-full bg-guardian-400 ml-1 mr-1" />}
+            icon={<div className="w-2 h-2 rounded-full bg-green-400 ml-1 mr-1" />}
             label="Matching"
             active={path === "/transactions/matching"}
           />
           <SidebarLink
             to="/transactions/reconciliation"
-            icon={<div className="w-2 h-2 rounded-full bg-guardian-400 ml-1 mr-1" />}
+            icon={<div className="w-2 h-2 rounded-full bg-green-400 ml-1 mr-1" />}
             label="Reconciliation"
             active={path === "/transactions/reconciliation"}
             disabled={true}
           />
           <SidebarLink
             to="/transactions/history"
-            icon={<div className="w-2 h-2 rounded-full bg-guardian-400 ml-1 mr-1" />}
+            icon={<div className="w-2 h-2 rounded-full bg-green-400 ml-1 mr-1" />}
             label="History"
             active={path === "/transactions/history"}
             disabled={true}
           />
         </SidebarGroup>
+        
+        <SidebarLink
+          to="/cases"
+          icon={<FolderOpen className="h-5 w-5" />}
+          label="Case Management"
+          active={path === "/cases"}
+        />
         
         <SidebarLink
           to="/alerts"

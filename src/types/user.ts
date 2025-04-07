@@ -9,6 +9,8 @@ export type UserRole =
 export interface User {
   id: number;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   role: UserRole;
   status: "Active" | "Inactive";
@@ -20,7 +22,20 @@ export interface UserCase {
   title: string;
   status: "Open" | "In Progress" | "Closed";
   assignedDate: string;
+  assignedTo?: string;
   closedDate?: string;
+  resolvedBy?: string;
+  resolution?: string;
+  escalatedTo?: string;
+  escalatedDate?: string;
+  escalationReason?: string;
+  reportedToAuthorities?: boolean;
+  reportedTo?: string;
+  reportedDate?: string;
+  referenceNumber?: string;
+  contactedPerson?: string;
+  comments?: string;
+  actionsTaken?: string;
 }
 
 export interface RolePermission {

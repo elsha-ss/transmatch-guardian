@@ -2,33 +2,93 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { User, UserCase, UserRole } from "@/types/user";
 import { toast } from "@/hooks/use-toast";
-import { isValidEmail } from "@/utils/rolePermissions";
 
 // Mock data to start with
 const mockCases: UserCase[] = [
-  { id: 1, title: "Suspicious Transaction #4392", status: "Open", assignedDate: "2023-06-15" },
-  { id: 2, title: "Account Verification #1205", status: "In Progress", assignedDate: "2023-06-10" },
-  { id: 3, title: "Potential Fraud Alert #7823", status: "Closed", assignedDate: "2023-05-28", closedDate: "2023-06-05" },
-  { id: 4, title: "Missing Documentation #9443", status: "Open", assignedDate: "2023-06-18" },
-  { id: 5, title: "Compliance Review #3356", status: "In Progress", assignedDate: "2023-06-12" },
+  { 
+    id: 1, 
+    title: "Suspicious Transaction #4392", 
+    status: "Open", 
+    assignedDate: "2023-06-15",
+    assignedTo: "John Smith",
+    actionsTaken: "Initial review completed"
+  },
+  { 
+    id: 2, 
+    title: "Account Verification #1205", 
+    status: "In Progress", 
+    assignedDate: "2023-06-10",
+    assignedTo: "Emma Wilson",
+    actionsTaken: "Customer contacted for additional documentation"
+  },
+  { 
+    id: 3, 
+    title: "Potential Fraud Alert #7823", 
+    status: "Closed", 
+    assignedDate: "2023-05-28", 
+    closedDate: "2023-06-05",
+    resolvedBy: "John Smith",
+    resolution: "False positive confirmed after customer verification"
+  },
+  { 
+    id: 4, 
+    title: "Missing Documentation #9443", 
+    status: "Open", 
+    assignedDate: "2023-06-18",
+    escalatedTo: "Michael Brown",
+    escalatedDate: "2023-06-20",
+    escalationReason: "Customer unresponsive after multiple attempts"
+  },
+  { 
+    id: 5, 
+    title: "Compliance Review #3356", 
+    status: "In Progress", 
+    assignedDate: "2023-06-12",
+    assignedTo: "Sarah Davis"
+  },
+  {
+    id: 6,
+    title: "Major Fraud Investigation #8811",
+    status: "In Progress",
+    assignedDate: "2023-06-01",
+    reportedToAuthorities: true,
+    reportedTo: "Financial Intelligence Unit",
+    reportedDate: "2023-06-05",
+    referenceNumber: "FIU-2023-0042"
+  },
+  {
+    id: 7,
+    title: "Money Laundering Suspicion #6723",
+    status: "Closed",
+    assignedDate: "2023-05-15",
+    closedDate: "2023-06-10",
+    resolvedBy: "Emma Wilson",
+    resolution: "Full investigation completed, case forwarded to compliance",
+    reportedToAuthorities: true,
+    reportedTo: "Financial Conduct Authority",
+    reportedDate: "2023-05-20",
+    referenceNumber: "FCA-2023-789"
+  }
 ];
 
 const mockUsers: User[] = [
-  { id: 1, name: "Admin User", email: "admin1@trialcorp.com", role: "Administrator", status: "Active" },
-  { id: 2, name: "John Smith", email: "john@trialcorp.com", role: "Analyst", status: "Active", cases: [mockCases[0], mockCases[2]] },
-  { id: 3, name: "Emma Wilson", email: "emma@trialcorp.com", role: "Specialist", status: "Active" },
-  { id: 4, name: "Michael Brown", email: "michael@trialcorp.com", role: "Manager", status: "Inactive" },
-  { id: 5, name: "Sarah Davis", email: "sarah@trialcorp.com", role: "Executive", status: "Active" },
+  { id: 1, firstName: "Admin", lastName: "User", name: "Admin User", email: "admin1@trialcorp.com", role: "Administrator", status: "Active" },
+  { id: 2, firstName: "John", lastName: "Smith", name: "John Smith", email: "jsmith@trialcorp.co.zw", role: "Analyst", status: "Active", cases: [mockCases[0], mockCases[2]] },
+  { id: 3, firstName: "Emma", lastName: "Wilson", name: "Emma Wilson", email: "ewilson@trialcorp.co.zw", role: "Specialist", status: "Active", cases: [mockCases[1], mockCases[6]] },
+  { id: 4, firstName: "Michael", lastName: "Brown", name: "Michael Brown", email: "mbrown@trialcorp.co.zw", role: "Manager", status: "Active", cases: [mockCases[3]] },
+  { id: 5, firstName: "Sarah", lastName: "Davis", name: "Sarah Davis", email: "sdavis@trialcorp.co.zw", role: "Executive", status: "Active", cases: [mockCases[4]] },
 ];
 
 interface UserContextType {
   users: User[];
   currentUser: User | null;
-  addUser: (user: Omit<User, "id">) => void;
+  addUser: (user: Omit<User, "id" | "email"> & { firstName: string, lastName: string }) => void;
   updateUser: (user: User) => void;
   deleteUser: (userId: number) => void;
   toggleUserStatus: (userId: number) => void;
   getUserCases: (userId: number) => UserCase[];
+  getAllCases: () => UserCase[];
+  updateCase: (caseData: UserCase) => void;
 }
 
 const UserContext = createContext<UserContextType>({
@@ -39,6 +99,8 @@ const UserContext = createContext<UserContextType>({
   deleteUser: () => {},
   toggleUserStatus: () => {},
   getUserCases: () => [],
+  getAllCases: () => [],
+  updateCase: () => {},
 });
 
 export const useUsers = () => useContext(UserContext);
@@ -47,36 +109,42 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [users, setUsers] = useState<User[]>(mockUsers);
   // For demo purposes, set the admin as the current user
   const [currentUser] = useState<User | null>(mockUsers.find(user => user.email === "admin1@trialcorp.com") || null);
+  const [cases, setCases] = useState<UserCase[]>(mockCases);
 
-  const addUser = (userData: Omit<User, "id">) => {
-    if (!isValidEmail(userData.email)) {
-      toast({
-        title: "Invalid Email",
-        description: "Only emails ending with @trialcorp.com are allowed.",
-        variant: "destructive"
-      });
-      return;
-    }
+  const generateEmail = (firstName: string, lastName: string): string => {
+    const firstInitial = firstName.charAt(0).toLowerCase();
+    const surname = lastName.toLowerCase();
+    return `${firstInitial}${surname}@trialcorp.co.zw`;
+  };
 
-    const existingUser = users.find(user => user.email === userData.email);
+  const addUser = (userData: Omit<User, "id" | "email"> & { firstName: string, lastName: string }) => {
+    const { firstName, lastName, ...rest } = userData;
+    const email = generateEmail(firstName, lastName);
+    const name = `${firstName} ${lastName}`;
+
+    const existingUser = users.find(user => user.email === email);
     if (existingUser) {
       toast({
         title: "User Already Exists",
-        description: `A user with email ${userData.email} already exists.`,
+        description: `A user with email ${email} already exists.`,
         variant: "destructive"
       });
       return;
     }
 
     const newUser: User = {
-      ...userData,
+      ...rest,
+      firstName,
+      lastName,
+      name,
+      email,
       id: Math.max(...users.map(u => u.id), 0) + 1
     };
 
     setUsers(prev => [...prev, newUser]);
     toast({
       title: "User Created",
-      description: `${newUser.name} has been added successfully.`
+      description: `${newUser.name} has been added successfully with email ${email}.`
     });
   };
 
@@ -136,6 +204,34 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return user?.cases || [];
   };
 
+  const getAllCases = () => {
+    return cases;
+  };
+
+  const updateCase = (caseData: UserCase) => {
+    setCases(prev => 
+      prev.map(c => c.id === caseData.id ? caseData : c)
+    );
+    
+    // Also update the case in any user that has it
+    setUsers(prev => 
+      prev.map(user => {
+        if (user.cases && user.cases.some(c => c.id === caseData.id)) {
+          return {
+            ...user,
+            cases: user.cases.map(c => c.id === caseData.id ? caseData : c)
+          };
+        }
+        return user;
+      })
+    );
+
+    toast({
+      title: "Case Updated",
+      description: `Case #${caseData.id} has been successfully updated.`
+    });
+  };
+
   return (
     <UserContext.Provider value={{ 
       users, 
@@ -144,7 +240,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       updateUser, 
       deleteUser, 
       toggleUserStatus,
-      getUserCases
+      getUserCases,
+      getAllCases,
+      updateCase
     }}>
       {children}
     </UserContext.Provider>
