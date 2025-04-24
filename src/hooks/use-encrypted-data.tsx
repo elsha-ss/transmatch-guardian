@@ -7,7 +7,7 @@ import { encrypt, decrypt } from '@/utils/crypto';
  * @param initialData The initial data to encrypt
  * @returns An object with the encrypted data, decrypted data, and methods to update them
  */
-const useEncryptedData = <T,>(initialData: T) => {
+const useEncryptedData = <T extends Record<string, any>>(initialData: T) => {
   // State for storing the encrypted and decrypted data
   const [encryptedData, setEncryptedData] = useState<{ ciphertext: string, iv: string } | null>(null);
   const [decryptedData, setDecryptedData] = useState<T>(initialData);

@@ -14,11 +14,21 @@ import { Badge } from "@/components/ui/badge";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import useEncryptedData from "@/hooks/use-encrypted-data";
 
+// Define a proper audit data type
+interface AuditData {
+  timestamp: number;
+  action: string;
+  userEmail?: string;
+  targetUserId?: number;
+  performedBy?: string;
+  details?: Record<string, any>;
+}
+
 const UserManagementContent = () => {
   const { users, deleteUser, toggleUserStatus, currentUser } = useUsers();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
-  const { encryptData } = useEncryptedData<{ timestamp: number, action: string }>({ 
+  const { encryptData } = useEncryptedData<AuditData>({ 
     timestamp: Date.now(), 
     action: "viewed_users" 
   });
@@ -31,7 +41,7 @@ const UserManagementContent = () => {
     encryptData({ 
       timestamp: Date.now(), 
       action: "accessed_user_management",
-      user: currentUser?.email
+      userEmail: currentUser?.email
     }).catch(console.error);
   }, [encryptData, currentUser]);
 
