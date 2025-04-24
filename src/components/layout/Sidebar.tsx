@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -155,14 +154,12 @@ const Sidebar = () => {
             icon={<div className="w-2 h-2 rounded-full bg-green-400 ml-1 mr-1" />}
             label="Reconciliation"
             active={path === "/transactions/reconciliation"}
-            disabled={true}
           />
           <SidebarLink
             to="/transactions/history"
             icon={<div className="w-2 h-2 rounded-full bg-green-400 ml-1 mr-1" />}
             label="History"
             active={path === "/transactions/history"}
-            disabled={true}
           />
         </SidebarGroup>
         
