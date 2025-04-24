@@ -1,9 +1,11 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Upload from "./pages/Upload";
 import Matching from "./pages/transactions/Matching";
@@ -25,15 +27,57 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/transactions/matching" element={<Matching />} />
-            <Route path="/transactions/reconciliation" element={<Upload />} /> {/* Temporary placeholder */}
-            <Route path="/transactions/history" element={<Upload />} /> {/* Temporary placeholder */}
-            <Route path="/cases" element={<Cases />} />
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/reports" element={<Reports />} />
+            
+            <Route path="/upload" element={
+              <ProtectedRoute requiredPermission="import">
+                <Upload />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/transactions/matching" element={
+              <ProtectedRoute requiredRoles={["Administrator", "Specialist", "Analyst"]}>
+                <Matching />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/transactions/reconciliation" element={
+              <ProtectedRoute requiredRoles={["Administrator", "Manager", "Specialist"]}>
+                <Upload />
+              </ProtectedRoute>
+            } /> {/* Temporary placeholder */}
+            
+            <Route path="/transactions/history" element={
+              <ProtectedRoute requiredPermission="read">
+                <Upload />
+              </ProtectedRoute>
+            } /> {/* Temporary placeholder */}
+            
+            <Route path="/cases" element={
+              <ProtectedRoute requiredPermission="handleCases">
+                <Cases />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/alerts" element={
+              <ProtectedRoute requiredPermission="reviewAlerts">
+                <Alerts />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/reports" element={
+              <ProtectedRoute requiredPermission="export">
+                <Reports />
+              </ProtectedRoute>
+            } />
+            
             <Route path="/users" element={<UserManagement />} />
-            <Route path="/settings" element={<Settings />} />
+            
+            <Route path="/settings" element={
+              <ProtectedRoute requiredRoles={["Administrator"]}>
+                <Settings />
+              </ProtectedRoute>
+            } />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

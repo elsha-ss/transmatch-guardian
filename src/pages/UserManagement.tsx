@@ -4,23 +4,36 @@ import PageLayout from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Edit, Trash, Shield, ShieldOff } from "lucide-react";
+import { Search, Edit, Trash, Shield, ShieldOff, Lock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { UserProvider, useUsers } from "@/contexts/UserContext";
 import { User } from "@/types/user";
 import AddUserDialog from "@/components/users/AddUserDialog";
 import UserCasesDialog from "@/components/users/UserCasesDialog";
 import { Badge } from "@/components/ui/badge";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import useEncryptedData from "@/hooks/use-encrypted-data";
 
 const UserManagementContent = () => {
   const { users, deleteUser, toggleUserStatus, currentUser } = useUsers();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
+  const { encryptData } = useEncryptedData<{ timestamp: number, action: string }>({ 
+    timestamp: Date.now(), 
+    action: "viewed_users" 
+  });
 
   useEffect(() => {
     // Set page title
     document.title = "User Management | TransMatch Guardian";
-  }, []);
+    
+    // Log encrypted audit trail
+    encryptData({ 
+      timestamp: Date.now(), 
+      action: "accessed_user_management",
+      user: currentUser?.email
+    }).catch(console.error);
+  }, [encryptData, currentUser]);
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
@@ -38,7 +51,15 @@ const UserManagementContent = () => {
     }
   }, [searchQuery, users]);
 
-  const handleUserAction = (action: string, userId: number) => {
+  const handleUserAction = async (action: string, userId: number) => {
+    // Log encrypted audit trail for each action
+    await encryptData({
+      timestamp: Date.now(),
+      action: `user_${action}`,
+      targetUserId: userId,
+      performedBy: currentUser?.email
+    });
+    
     switch (action) {
       case "edit":
         toast({
@@ -61,6 +82,10 @@ const UserManagementContent = () => {
   return (
     <PageLayout title="User Management" description="Manage user accounts and permissions">
       <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <Lock className="h-5 w-5 text-green-600 mr-2" />
+          <span className="text-sm text-green-600">AES-256 Encrypted • Role-Based Access Control</span>
+        </div>
         <AddUserDialog />
       </div>
 
@@ -169,7 +194,9 @@ const UserManagementContent = () => {
 
 const UserManagement = () => (
   <UserProvider>
-    <UserManagementContent />
+    <ProtectedRoute requiredRoles={["Administrator", "Manager"]}>
+      <UserManagementContent />
+    </ProtectedRoute>
   </UserProvider>
 );
 
