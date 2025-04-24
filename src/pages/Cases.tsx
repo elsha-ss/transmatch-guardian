@@ -1,12 +1,18 @@
 
 import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import PageLayout from "@/components/layout/PageLayout";
 import CaseTabs from "@/components/cases/CaseTabs";
 import { UserProvider, useUsers } from "@/contexts/UserContext";
+import { searchCases } from "@/utils/searchUtils";
 
 const CasesContent = () => {
   const { getAllCases } = useUsers();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+  
   const allCases = getAllCases();
+  const filteredCases = searchCases(allCases, searchQuery);
 
   useEffect(() => {
     document.title = "Case Management | TransMatch Guardian";
@@ -14,7 +20,7 @@ const CasesContent = () => {
 
   return (
     <PageLayout title="Case Management" description="View and manage all cases in the system">
-      <CaseTabs allCases={allCases} />
+      <CaseTabs allCases={filteredCases} />
     </PageLayout>
   );
 };

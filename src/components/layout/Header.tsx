@@ -1,6 +1,6 @@
 
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, User, LogOut, Settings } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ChevronDown, User, LogOut, Settings, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,11 +9,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import NotificationsDropdown from "./NotificationsDropdown";
 import { toast } from "@/hooks/use-toast";
+import { useCallback, useState } from "react";
+import { useUsers } from "@/contexts/UserContext";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { getAllCases } = useUsers();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Only perform search if we're not already on the cases page
+    if (location.pathname !== "/cases" && query.trim()) {
+      // Navigate to cases page with search query
+      navigate(`/cases?search=${encodeURIComponent(query)}`);
+    }
+  }, [navigate, location.pathname]);
 
   const handleProfileClick = () => {
     toast({
@@ -52,16 +69,16 @@ const Header = () => {
           </Link>
         </div>
         
-        <div className="flex-1 max-w-xl mx-8 relative hidden md:block">
+        <div className="flex-1 max-w-xl mx-8 relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <Search className="h-4 w-4 text-gray-400" />
           </div>
-          <input
+          <Input
             type="text"
-            placeholder="Search transactions, vendors, alerts..."
-            className="w-full py-1.5 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
+            placeholder="Search by case number, date, supplier..."
+            className="w-full py-1.5 pl-10 pr-4"
+            value={searchQuery}
+            onChange={handleSearch}
           />
         </div>
 
