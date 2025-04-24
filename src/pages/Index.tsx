@@ -1,4 +1,3 @@
-
 import { 
   BarChart2, 
   CircleDollarSign, 
@@ -42,39 +41,43 @@ const Index = () => {
         </motion.div>
         
         <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" variants={item}>
-          <StatCard 
-            title="Transactions Processed" 
-            value="8,542" 
-            icon={<CircleDollarSign className="h-6 w-6 text-green-600" />}
-            change={12}
-            className="border-l-4 border-l-green-500"
-          />
+          <div className="border-l-4 border-l-green-500">
+            <StatCard 
+              title="Transactions Processed" 
+              value="8,542" 
+              icon={<CircleDollarSign className="h-6 w-6 text-green-600" />}
+              change={12}
+            />
+          </div>
           
-          <StatCard 
-            title="Detected Anomalies" 
-            value="58" 
-            icon={<AlertTriangle className="h-6 w-6 text-orange-600" />}
-            change={-8}
-            description="Anomalies requiring investigation"
-            className="border-l-4 border-l-orange-500"
-          />
+          <div className="border-l-4 border-l-orange-500">
+            <StatCard 
+              title="Detected Anomalies" 
+              value="58" 
+              icon={<AlertTriangle className="h-6 w-6 text-orange-600" />}
+              change={-8}
+              description="Anomalies requiring investigation"
+            />
+          </div>
           
-          <StatCard 
-            title="Average Processing Time" 
-            value="1.4 min" 
-            icon={<Clock className="h-6 w-6 text-green-600" />}
-            change={-23}
-            description="Time to reconcile transactions"
-            className="border-l-4 border-l-green-500"
-          />
+          <div className="border-l-4 border-l-green-500">
+            <StatCard 
+              title="Average Processing Time" 
+              value="1.4 min" 
+              icon={<Clock className="h-6 w-6 text-green-600" />}
+              change={-23}
+              description="Time to reconcile transactions"
+            />
+          </div>
           
-          <StatCard 
-            title="Active Users" 
-            value="24" 
-            icon={<Users className="h-6 w-6 text-orange-600" />}
-            description="Users active in the last 24 hours"
-            className="border-l-4 border-l-orange-500"
-          />
+          <div className="border-l-4 border-l-orange-500">
+            <StatCard 
+              title="Active Users" 
+              value="24" 
+              icon={<Users className="h-6 w-6 text-orange-600" />}
+              description="Users active in the last 24 hours"
+            />
+          </div>
         </motion.div>
         
         <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6" variants={item}>

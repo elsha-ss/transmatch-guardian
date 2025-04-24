@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Bell, Check, X, Info, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 type NotificationType = "alert" | "info" | "warning";
 
@@ -54,6 +54,7 @@ const sampleNotifications: Notification[] = [
 const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState<Notification[]>(sampleNotifications);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -97,6 +98,8 @@ const NotificationsDropdown = () => {
         n.id === id ? { ...n, isRead: true } : n
       )
     );
+    setIsOpen(false);
+    navigate("/alerts");
   };
 
   return (
@@ -137,7 +140,7 @@ const NotificationsDropdown = () => {
               {notifications.map((notification) => (
                 <li 
                   key={notification.id} 
-                  className={`p-4 hover:bg-gray-50 ${notification.isRead ? "" : "bg-blue-50"}`}
+                  className={`p-4 hover:bg-gray-50 cursor-pointer ${notification.isRead ? "" : "bg-blue-50"}`}
                   onClick={() => markAsRead(notification.id)}
                 >
                   <div className="flex gap-3">
