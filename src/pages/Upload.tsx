@@ -16,12 +16,14 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import DataUploadSection from "@/components/upload/DataUploadSection";
 
 const Upload = () => {
+  const navigate = useNavigate();
   const [processingStats, setProcessingStats] = useState<{
     recordsProcessed: number;
     processingTime: number;

@@ -5,12 +5,13 @@ import { useUsers } from '@/contexts/UserContext';
 import { checkPermission } from '@/utils/rolePermissions';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { RolePermission } from '@/types/user';
 
-type Permission = keyof ReturnType<typeof checkPermission>[keyof ReturnType<typeof checkPermission>];
+type Permission = keyof RolePermission['permissions'];
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredPermission?: keyof ReturnType<typeof checkPermission>;
+  requiredPermission?: Permission;
   requiredRoles?: string[];
 }
 

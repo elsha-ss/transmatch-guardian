@@ -15,6 +15,9 @@ import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
 import Cases from "./pages/Cases";
 import NotFound from "./pages/NotFound";
+import { RolePermission } from "./types/user";
+
+type Permission = keyof RolePermission['permissions'];
 
 const queryClient = new QueryClient();
 
@@ -29,7 +32,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             
             <Route path="/upload" element={
-              <ProtectedRoute requiredPermission="import">
+              <ProtectedRoute requiredPermission={"import" as Permission}>
                 <Upload />
               </ProtectedRoute>
             } />
@@ -47,25 +50,25 @@ const App = () => (
             } />
             
             <Route path="/transactions/history" element={
-              <ProtectedRoute requiredPermission="read">
+              <ProtectedRoute requiredPermission={"read" as Permission}>
                 <Upload />
               </ProtectedRoute>
             } />
             
             <Route path="/cases" element={
-              <ProtectedRoute requiredPermission="handleCases">
+              <ProtectedRoute requiredPermission={"handleCases" as Permission}>
                 <Cases />
               </ProtectedRoute>
             } />
             
             <Route path="/alerts" element={
-              <ProtectedRoute requiredPermission="reviewAlerts">
+              <ProtectedRoute requiredPermission={"reviewAlerts" as Permission}>
                 <Alerts />
               </ProtectedRoute>
             } />
             
             <Route path="/reports" element={
-              <ProtectedRoute requiredPermission="export">
+              <ProtectedRoute requiredPermission={"export" as Permission}>
                 <Reports />
               </ProtectedRoute>
             } />
