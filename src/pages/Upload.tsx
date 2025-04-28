@@ -1,4 +1,3 @@
-
 import PageLayout from "@/components/layout/PageLayout";
 import FileUpload from "@/components/upload/FileUpload";
 import { 
@@ -13,10 +12,36 @@ import {
   FileJson, 
   Database, 
   Wifi, 
-  Info
+  Info,
+  AlertTriangle
 } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
+import DataUploadSection from "@/components/upload/DataUploadSection";
 
 const Upload = () => {
+  const [processingStats, setProcessingStats] = useState<{
+    recordsProcessed: number;
+    processingTime: number;
+    violations: number;
+    discrepancies: number;
+  } | null>(null);
+
+  const handleUploadComplete = (stats: {
+    recordsProcessed: number;
+    processingTime: number;
+    violations: number;
+    discrepancies: number;
+  }) => {
+    setProcessingStats(stats);
+    toast({
+      title: "Data Processing Complete",
+      description: `Processed ${stats.recordsProcessed} records in ${stats.processingTime.toFixed(1)}s. Found ${stats.violations} violations and ${stats.discrepancies} discrepancies.`,
+    });
+  };
+
   return (
     <PageLayout>
       <div className="mb-6">
@@ -53,7 +78,51 @@ const Upload = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <FileUpload />
+              <DataUploadSection onUploadComplete={handleUploadComplete} />
+              
+              {processingStats && (
+                <div className="mt-6 p-4 bg-green-50 border border-green-100 rounded-lg">
+                  <h3 className="font-medium text-green-800 mb-2">Processing Results:</h3>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex justify-between">
+                      <span>Records Processed:</span>
+                      <span className="font-medium">{processingStats.recordsProcessed}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Processing Time:</span>
+                      <span className="font-medium">{processingStats.processingTime.toFixed(1)}s</span>
+                    </li>
+                    <Separator className="my-2" />
+                    <li className="flex justify-between">
+                      <span>Rule Violations:</span>
+                      <span className="font-medium text-red-600">{processingStats.violations}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span>Deposit-Sales Discrepancies:</span>
+                      <span className="font-medium text-orange-600">{processingStats.discrepancies}</span>
+                    </li>
+                  </ul>
+                  <div className="mt-4">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="mr-2"
+                      onClick={() => toast({
+                        title: "Report Generated",
+                        description: "Your violation report has been downloaded."
+                      })}
+                    >
+                      Download Violation Report
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      onClick={() => navigate("/transactions/matching")}
+                    >
+                      View Transactions
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -153,6 +222,24 @@ const Upload = () => {
                     <h4 className="text-base font-medium text-gray-800">Excel Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Excel format with data validation</p>
                     <p className="text-xs text-gray-500">Includes multiple sheets for different transaction types</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
+                  <FileSpreadsheet className="h-8 w-8 text-blue-600 mr-3" />
+                  <div>
+                    <h4 className="text-base font-medium text-gray-800">Bank Deposits Template</h4>
+                    <p className="text-sm text-gray-600 mt-1 mb-3">Template for bank deposit data</p>
+                    <p className="text-xs text-gray-500">Fields: Date, Deposit Amount, Sales Reference ID, Sales Amount</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
+                  <FileSpreadsheet className="h-8 w-8 text-blue-600 mr-3" />
+                  <div>
+                    <h4 className="text-base font-medium text-gray-800">Procurement Payments</h4>
+                    <p className="text-sm text-gray-600 mt-1 mb-3">Template for procurement payments</p>
+                    <p className="text-xs text-gray-500">Fields: Transaction ID, Vendor, Date, Payment Amount, Description</p>
                   </div>
                 </div>
                 

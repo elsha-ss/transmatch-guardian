@@ -16,6 +16,7 @@ const transactions = [
     vendor: "Acme Supplies",
     status: "matched",
     matchConfidence: 100,
+    flagReason: null,
     matched: {
       id: "BNK-77123",
       source: "Bank Statement",
@@ -32,6 +33,7 @@ const transactions = [
     vendor: "Office Solutions",
     status: "matched",
     matchConfidence: 98,
+    flagReason: null,
     matched: {
       id: "BNK-77124",
       source: "Bank Statement",
@@ -48,6 +50,7 @@ const transactions = [
     vendor: "Tech Partners Inc.",
     status: "partial_match",
     matchConfidence: 85,
+    flagReason: null,
     matched: {
       id: "BNK-77125",
       source: "Bank Statement",
@@ -62,7 +65,8 @@ const transactions = [
     date: "2023-09-17",
     amount: 945.75,
     vendor: "Global Distribution",
-    status: "unmatched",
+    status: "flagged",
+    flagReason: "Procurement Rule Violation: Amount exceeds $500",
     matchConfidence: 0
   },
   {
@@ -73,14 +77,31 @@ const transactions = [
     amount: 12340.00,
     vendor: "Enterprise Solutions",
     status: "flagged",
+    flagReason: "Procurement Rule Violation: Amount exceeds $500",
     matchConfidence: 67,
     matched: {
       id: "BNK-77126",
       source: "Bank Statement",
       date: "2023-09-19",
       amount: 12340.00
-    },
-    flag: "Unusual vendor payment pattern"
+    }
+  },
+  {
+    id: "TX-98717",
+    source: "Bank Deposits",
+    reference: "DEP-2023-0437",
+    date: "2023-09-20",
+    amount: 3570.00,
+    vendor: "Sales Revenue",
+    status: "flagged",
+    flagReason: "Deposit-Sales Mismatch: 8.2% difference",
+    matchConfidence: 92,
+    matched: {
+      id: "SLS-88412",
+      source: "Sales Records",
+      date: "2023-09-20",
+      amount: 3300.00
+    }
   }
 ];
 
@@ -99,8 +120,16 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-const TransactionMatchingTable = () => {
+interface TransactionMatchingTableProps {
+  showOnlyFlagged?: boolean;
+}
+
+const TransactionMatchingTable = ({ showOnlyFlagged = false }: TransactionMatchingTableProps) => {
   const [selectedTransaction, setSelectedTransaction] = useState<string | null>(null);
+  
+  const filteredTransactions = showOnlyFlagged 
+    ? transactions.filter(t => t.status === "flagged") 
+    : transactions;
   
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -137,12 +166,13 @@ const TransactionMatchingTable = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {transactions.map((transaction) => (
+            {filteredTransactions.map((transaction) => (
               <tr 
                 key={transaction.id} 
                 className={cn(
                   "hover:bg-gray-50 cursor-pointer",
-                  selectedTransaction === transaction.id ? "bg-guardian-50" : ""
+                  selectedTransaction === transaction.id ? "bg-guardian-50" : "",
+                  transaction.status === "flagged" ? "bg-red-50" : ""
                 )}
                 onClick={() => setSelectedTransaction(
                   selectedTransaction === transaction.id ? null : transaction.id
@@ -200,7 +230,12 @@ const TransactionMatchingTable = () => {
                       </Button>
                     ) : null}
                     {transaction.status === "flagged" && (
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-red-600"
+                        title={transaction.flagReason || ""}
+                      >
                         <AlertTriangle className="h-4 w-4" />
                       </Button>
                     )}
@@ -208,6 +243,50 @@ const TransactionMatchingTable = () => {
                 </td>
               </tr>
             ))}
+            {selectedTransaction && (
+              <tr className="bg-gray-50">
+                <td colSpan={8} className="px-4 py-3">
+                  <div className="text-sm">
+                    {(() => {
+                      const transaction = transactions.find(t => t.id === selectedTransaction);
+                      if (!transaction) return null;
+                      
+                      if (transaction.flagReason) {
+                        return (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded flex items-start">
+                            <AlertTriangle className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-red-800">Rule Violation Detected</p>
+                              <p className="text-red-700">{transaction.flagReason}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      if (transaction.matched) {
+                        return (
+                          <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                            <p className="font-medium text-blue-800">Matched Transaction Details</p>
+                            <div className="mt-2 space-y-1">
+                              <p className="text-blue-700">ID: {transaction.matched.id}</p>
+                              <p className="text-blue-700">Source: {transaction.matched.source}</p>
+                              <p className="text-blue-700">Date: {transaction.matched.date}</p>
+                              <p className="text-blue-700">Amount: ${transaction.matched.amount.toFixed(2)}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      return (
+                        <div className="p-3 bg-gray-100 border border-gray-200 rounded">
+                          <p>No additional details available</p>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

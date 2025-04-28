@@ -44,13 +44,13 @@ const App = () => (
               <ProtectedRoute requiredRoles={["Administrator", "Manager", "Specialist"]}>
                 <Upload />
               </ProtectedRoute>
-            } /> {/* Temporary placeholder */}
+            } />
             
             <Route path="/transactions/history" element={
               <ProtectedRoute requiredPermission="read">
                 <Upload />
               </ProtectedRoute>
-            } /> {/* Temporary placeholder */}
+            } />
             
             <Route path="/cases" element={
               <ProtectedRoute requiredPermission="handleCases">

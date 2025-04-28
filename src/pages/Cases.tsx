@@ -12,7 +12,8 @@ const CasesContent = () => {
   const searchQuery = searchParams.get("search") || "";
   
   const allCases = getAllCases();
-  const filteredCases = searchCases(allCases, searchQuery);
+  // We need to cast the result to match the expected type for CaseTabs
+  const filteredCases = searchCases(allCases, searchQuery) as any[];
 
   useEffect(() => {
     document.title = "Case Management | TransMatch Guardian";
