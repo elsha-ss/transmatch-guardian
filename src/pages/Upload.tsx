@@ -13,8 +13,7 @@ import {
   Database, 
   Wifi, 
   Info,
-  AlertTriangle,
-  Download
+  AlertTriangle
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import DataUploadSection from "@/components/upload/DataUploadSection";
-import { downloadTemplate } from "@/utils/templateGenerator";
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -43,14 +41,6 @@ const Upload = () => {
     toast({
       title: "Data Processing Complete",
       description: `Processed ${stats.recordsProcessed} records in ${stats.processingTime.toFixed(1)}s. Found ${stats.violations} violations and ${stats.discrepancies} discrepancies.`,
-    });
-  };
-
-  const handleTemplateDownload = (templateType: string) => {
-    downloadTemplate(templateType);
-    toast({
-      title: "Template Downloaded",
-      description: "You can now fill in your data using this template."
     });
   };
 
@@ -219,82 +209,58 @@ const Upload = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('general')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileSpreadsheet className="h-8 w-8 text-green-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">CSV Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Standard CSV format for transaction data</p>
                     <p className="text-xs text-gray-500">Contains columns for transaction ID, date, amount, vendor, etc.</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-green-600 transition-colors" />
                 </div>
                 
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('general')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileSpreadsheet className="h-8 w-8 text-green-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">Excel Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Excel format with data validation</p>
                     <p className="text-xs text-gray-500">Includes multiple sheets for different transaction types</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-green-600 transition-colors" />
                 </div>
                 
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('bank-deposits')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileSpreadsheet className="h-8 w-8 text-blue-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">Bank Deposits Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Template for bank deposit data</p>
                     <p className="text-xs text-gray-500">Fields: Date, Deposit Amount, Sales Reference ID, Sales Amount</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-blue-600 transition-colors" />
                 </div>
                 
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('procurement')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileSpreadsheet className="h-8 w-8 text-blue-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">Procurement Payments</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Template for procurement payments</p>
                     <p className="text-xs text-gray-500">Fields: Transaction ID, Vendor, Date, Payment Amount, Description</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-blue-600 transition-colors" />
                 </div>
                 
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('general')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileJson className="h-8 w-8 text-blue-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">JSON Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">Standard JSON structure for API data</p>
                     <p className="text-xs text-gray-500">Compatible with most financial systems and APIs</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-blue-600 transition-colors" />
                 </div>
                 
-                <div 
-                  className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer"
-                  onClick={() => handleTemplateDownload('general')}
-                >
+                <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-start hover:border-guardian-400 hover:shadow-sm transition-all cursor-pointer">
                   <FileJson className="h-8 w-8 text-blue-600 mr-3" />
-                  <div className="flex-grow">
+                  <div>
                     <h4 className="text-base font-medium text-gray-800">XML Template</h4>
                     <p className="text-sm text-gray-600 mt-1 mb-3">XML schema for legacy system integration</p>
                     <p className="text-xs text-gray-500">Compatible with SOAP APIs and older financial systems</p>
                   </div>
-                  <Download className="h-5 w-5 text-gray-400 hover:text-blue-600 transition-colors" />
                 </div>
               </div>
             </CardContent>
