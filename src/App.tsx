@@ -20,7 +20,7 @@ import { RolePermission } from "./types/user";
 type Permission = keyof RolePermission['permissions'];
 
 const queryClient = new QueryClient();
-{}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
