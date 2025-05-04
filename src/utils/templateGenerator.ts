@@ -2,7 +2,7 @@
 import { saveAs } from 'file-saver';
 
 // Helper function to generate CSV content
-const generateCSV = (headers: string[], rows: string[][]) => {
+const generateCSV = (headers: string[], rows: string[][]): string => {
   const headerRow = headers.join(',');
   const dataRows = rows.map(row => row.join(','));
   return [headerRow, ...dataRows].join('\n');
@@ -39,7 +39,9 @@ const templates = {
   }
 };
 
-export const downloadTemplate = (templateType: string) => {
+export type TemplateType = keyof typeof templates;
+
+export const downloadTemplate = (templateType: string): void => {
   const template = templates[templateType as keyof typeof templates];
   
   if (!template) {
